@@ -106,10 +106,14 @@ int main(void)
       HAL_UART_Transmit(&huart2, err_buf, 7, HAL_MAX_DELAY);
 
   struct IIR_lowpass filter_acc;
-  float alpha = 0.3; // 16 hz cutoff frequency with sampling frequency of 200 Hz
+  float alpha = 0.3;
   init_lowpass(&filter_acc, alpha);
-
   imu.filter_acc = &filter_acc;
+
+  struct IIR_lowpass filter_compass;
+  alpha = 0.2;
+  init_lowpass(&filter_compass, alpha);
+  imu.filter_compass = &filter_compass;
 
   uint8_t buf[MAX_MSG_LEN] = { 0 };
   int len;
@@ -125,16 +129,28 @@ int main(void)
   while (1)
   {
       if (HAL_GetTick() - last_sent >= SAMPLING_PERIOD) {
+//          read_compass(&imu);
+//
+//
+//          len = strprint((char*)buf, "x - %d\ty - %d\tz - %d\r\n", imu.compass_x, imu.compass_y, imu.compass_z);
+//
+//          if (len < 0)
+//              continue;
+//          if (transmit_readings(&imu, buf, len) != HAL_OK)
+//              HAL_UART_Transmit(&huart2, err_buf, 7, HAL_MAX_DELAY);
+
           read_gyro(&imu);
           read_acc(&imu);
           update_lowpass(imu.filter_acc, imu.acc_x, imu.acc_y, imu.acc_z);
+          read_compass(&imu);
+          update_lowpass(imu.filter_compass, imu.compass_x, imu.compass_y, imu.compass_z);
 
-          float attitude[2];
+          float attitude[3];
           compute_attitude(attitude, &imu);
 
-          update_lowpass(&out_filter, attitude[0], attitude[1], 0);
+          update_lowpass(&out_filter, attitude[0], attitude[1], attitude[2]);
 
-          len = strprint((char*)buf, "Roll - %f\tPitch - %f\r\n", out_filter.out[0], out_filter.out[1]);
+          len = strprint((char*)buf, "Roll - %f\tPitch - %f\tYaw - %f\r\n", out_filter.out[0], out_filter.out[1], out_filter.out[2]);
 
           if (len < 0)
               continue;

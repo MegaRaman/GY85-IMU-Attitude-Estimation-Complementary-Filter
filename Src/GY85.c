@@ -88,7 +88,6 @@ sensor_state init_gy85(struct GY85 *gy85) {
     return ret;
 }
 
-// TODO: must use dma
 sensor_state read_acc(struct GY85 *gy85) {
     uint8_t reg_addr = ADXL345_DATA;
     uint8_t tmp[ADXL345_OUT_LEN];
@@ -138,7 +137,6 @@ sensor_state read_compass(struct GY85 *gy85) {
     return SENSOR_OK;
 }
 
-// TODO: must use dma
 HAL_StatusTypeDef transmit_readings(struct GY85 *gy85, uint8_t *buf, int len) {
     HAL_StatusTypeDef ret;
     ret = HAL_UART_Transmit(gy85->huart, buf, len, HAL_MAX_DELAY);

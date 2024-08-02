@@ -63,7 +63,8 @@
  * @compass_x/y/z - Magnetometer measurements
  * @hi2c - Pointer to I2C handle, which is used to communicate with the IMU
  * @huart - Pointer to UART handle, which is used to communicate with the host
- * @filter_acc - Lowpass filter used to filter acceletometer measurements data
+ * @filter_acc - Acceletometer measurements lowpass filter
+ * @filter_compass - Magnetometer measurements lowpass filter
  * */
 struct GY85 {
     int16_t acc_x;
@@ -78,6 +79,7 @@ struct GY85 {
     I2C_HandleTypeDef *hi2c;
     UART_HandleTypeDef *huart;
     struct IIR_lowpass *filter_acc;
+    struct IIR_lowpass *filter_compass;
 };
 
 typedef enum {
