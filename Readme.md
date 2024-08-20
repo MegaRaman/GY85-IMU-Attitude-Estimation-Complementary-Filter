@@ -28,5 +28,5 @@ Also for magnetometer estimations of yaw angle [this paper](https://ietresearch.
 
 ## Issues
 
-- For some reason yaw angle changes with roll or pitch, presumably it is happening because of Euler angles interdependence
+- It is found that used GY-85 board has great inter-axis dependence so changes in one parameter may greatly affect the others
 
